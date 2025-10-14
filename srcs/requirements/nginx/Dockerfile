@@ -1,4 +1,3 @@
-#Penulatimate version as of 13/10/25
 FROM alpine:3.22.2
 
 ARG DOMAIN_NAME
