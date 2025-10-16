@@ -49,5 +49,5 @@ else
 fi
 
 # Start MariaDB in foreground
-echo "Starting MariaDB server..."
+echo "Starting MariaDB server"
 exec mysqld --user=mysql --console
