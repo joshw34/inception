@@ -1,20 +1,15 @@
 FROM alpine:3.22.2
 
-ARG DOMAIN_NAME
-
-COPY ./files/setup_ssl.sh /usr/local/bin/setup_ssl.sh
-
 RUN apk update && \
-    apk add --no-cache nginx openssl && \
-    chmod +x /usr/local/bin/setup_ssl.sh && \
-    /usr/local/bin/setup_ssl.sh
+    apk add --no-cache nginx openssl
 
 COPY ./files/nginx.conf /etc/nginx/nginx.conf
+COPY ./files/entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN sed -i "s/\${DOMAIN_NAME}/$DOMAIN_NAME/g" /etc/nginx/nginx.conf
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 443
 
 LABEL description="nginx"
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
