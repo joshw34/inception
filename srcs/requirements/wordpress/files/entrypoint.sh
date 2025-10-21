@@ -64,6 +64,8 @@ if ! wp core is-installed --allow-root 2>/dev/null; then
     echo "WordPress setup complete!"
 fi
 
+chown -R nobody:nobody /var/www/html
+
 # Start PHP-FPM in foreground
 echo "Starting PHP-FPM..."
 exec php-fpm84 -F

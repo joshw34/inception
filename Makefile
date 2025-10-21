@@ -68,6 +68,7 @@ clean: down
 	docker volume prune -f
 
 fclean: clean
+	@docker run --rm -v $(DATA_DIR):/data alpine sh -c "chmod -R 777 /data && rm -rf /data/*" 2>/dev/null || true
 	@rm -rf $(DATA_DIR)/mariadb/*
 	@rm -rf $(DATA_DIR)/wordpress/*
 	@rm -rf $(SECRETS_DIR)
