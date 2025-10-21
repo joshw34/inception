@@ -1,0 +1,19 @@
+FROM alpine:3.22.2
+
+RUN apk update && \
+    apk add --no-cache php84 php84-fpm php84-mysqli php84-curl \
+    php84-gd php84-xml php84-mbstring php84-zip php84-opcache && \
+    wget https://wordpress.org/wordpress-6.8.3.tar.gz && \
+    tar -xvzf wordpress-6.8.3.tar.gz -C /var/www/html --strip-components=1 && \
+    rm wordpress-6.8.3.tar.gz && \
+    mkdir -p /etc/php84/php-fpm.d/
+
+COPY ./files/www.conf /etc/php84/php-fpm.d/www.conf
+COPY ./files/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 9000
+
+LABEL description="wordpress"
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

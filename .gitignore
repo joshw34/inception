@@ -10,7 +10,6 @@ srcs/.env
 .DS_Store
 *.swp
 *.swo
-*~
 
 # Editor files
 .vscode/
@@ -18,3 +17,5 @@ srcs/.env
 
 # Logs
 *.log
+
+*lock.Notes.odt#
