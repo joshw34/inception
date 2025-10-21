@@ -5,11 +5,26 @@ MYSQL_PASSWORD=$(cat /run/secrets/db_password)
 WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
 
-# Wait for MariaDB to be ready
+# Wait for MariaDB port to be open (simpler, won't get blocked)
 echo "Waiting for MariaDB..."
-while ! mysqladmin ping -h"$MYSQL_HOST" --silent; do
-    sleep 1
+RETRIES=30
+while [ $RETRIES -gt 0 ]; do
+    if nc -z $MYSQL_HOST 3306 2>/dev/null; then
+        echo "MariaDB port is open!"
+        # Give it a few more seconds to fully initialize
+        sleep 5
+        break
+    fi
+    RETRIES=$((RETRIES - 1))
+    echo "MariaDB not ready yet, waiting... ($RETRIES attempts left)"
+    sleep 2
 done
+
+if [ $RETRIES -eq 0 ]; then
+    echo "ERROR: MariaDB did not become ready in time"
+    exit 1
+fi
+
 echo "MariaDB is ready!"
 
 # Navigate to WordPress directory
