@@ -19,12 +19,15 @@ setup: env-file secrets data-dirs
 env-file:
 	@if [ ! -f ./srcs/.env ]; then \
 		echo "DOMAIN_NAME=$(DOMAIN_NAME)" > ./srcs/.env; \
+		echo "MYSQL_HOST=mariadb" >> ./srcs/.env; \
 		echo "MYSQL_DATABASE=wordpress" >> ./srcs/.env; \
-		echo "MYSQL_USER=wordpress_user" >> ./srcs/.env;\
+		echo "MYSQL_USER=wordpress_user" >> ./srcs/.env; \
 		echo "WP_ADMIN_USER=$(USER_LOGIN)" >> ./srcs/.env; \
 		echo "WP_ADMIN_EMAIL=$(USER_LOGIN)@42.fr" >> ./srcs/.env; \
 		echo "WP_USER=wpuser" >> ./srcs/.env; \
 		echo "WP_USER_EMAIL=wpuser@42.fr" >> ./srcs/.env; \
+		echo "WP_TITLE=Inception" >> ./srcs/.env; \
+		echo "WP_URL=https://$(DOMAIN_NAME)" >> ./srcs/.env; \
 		echo "Generated .env file";\
 	fi
 
