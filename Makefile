@@ -11,6 +11,7 @@ DB_ROOT_PASS = $(SECRETS_DIR)/db_root_password.txt
 DB_PASS = $(SECRETS_DIR)/db_password.txt
 WP_ADMIN_PASS = $(SECRETS_DIR)/wp_admin_password.txt
 WP_USER_PASS = $(SECRETS_DIR)/wp_user_password.txt
+FTP_USER_PASS = $(SECRETS_DIR)/ftp_user_password.txt
 
 all: setup build up
 
@@ -28,6 +29,7 @@ env-file:
 		echo "WP_USER_EMAIL=wpuser@42.fr" >> ./srcs/.env; \
 		echo "WP_TITLE=Inception" >> ./srcs/.env; \
 		echo "WP_URL=https://$(DOMAIN_NAME)" >> ./srcs/.env; \
+		echo "FTP_USER=$(USER_LOGIN)" >> ./srcs/.env; \
 		echo "Generated .env file";\
 	fi
 
@@ -48,6 +50,10 @@ secrets:
 	@if [ ! -f $(WP_USER_PASS) ]; then \
 		openssl rand -base64 32 > $(WP_USER_PASS); \
 		echo "Generated wp_user_password"; \
+	fi
+	@if [ ! -f $(FTP_USER_PASS) ]; then \
+		openssl rand -base64 32 > $(FTP_USER_PASS); \
+		echo "Generated ftp_user_password"; \
 	fi
 
 data-dirs:

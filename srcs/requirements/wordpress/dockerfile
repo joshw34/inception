@@ -1,5 +1,8 @@
 FROM alpine:3.22.2
 
+RUN addgroup -g 1000 -S wp-data && \
+    adduser -u 1000 -S -D -H -G wp-data wp-data
+
 RUN apk update && \
     apk add --no-cache \
     php84 \
@@ -23,7 +26,7 @@ RUN apk update && \
     wget https://wordpress.org/wordpress-6.8.3.tar.gz && \
     tar -xvzf wordpress-6.8.3.tar.gz -C /var/www/html --strip-components=1 && \
     rm wordpress-6.8.3.tar.gz && \
-    chown -R nobody:nobody /var/www/html && \
+    chown -R wp-data:wp-data /var/www/html && \
     wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
