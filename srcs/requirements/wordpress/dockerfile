@@ -3,20 +3,20 @@ FROM alpine:3.22.2
 RUN apk update && \
     apk add --no-cache \
     php84 \
-    php84-fpm \
-    php84-mysqli \
     php84-curl \
-    php84-gd \
-    php84-xml \
-    php84-mbstring \
-    php84-zip \
-    php84-opcache \
-    php84-json \
     php84-dom \
     php84-exif \
     php84-fileinfo \
+    php84-fpm \
+    php84-gd \
+    php84-json \
+    php84-mysqli \
+    php84-mbstring \
+    php84-opcache \
     php84-openssl \
     php84-phar \
+    php84-xml \
+    php84-zip \
     wget && \
     ln -s /usr/bin/php84 /usr/bin/php && \
     mkdir -p /var/www/html && \
