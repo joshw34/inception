@@ -73,6 +73,11 @@ services:
       - "50000-50010:50000-50010"
     volumes:
       - wordpress-data:/mnt/ftpdata
+    networks:
+      - inception
+    depends_on:
+      - wordpress
+    restart: always
 
 volumes:
   mariadb-data:
