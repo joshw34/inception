@@ -72,7 +72,8 @@ main() {
         wget \
         vim \
         net-tools \
-        openssl
+        openssl \
+        filezilla
     
     # Add user to docker group
     print_info "Adding $REAL_USER to docker group..."
