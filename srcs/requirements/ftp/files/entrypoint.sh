@@ -1,4 +1,4 @@
-#!/bin/sh
+#!bin/sh
 FTP_USER_PASSWORD=$(cat /run/secrets/ftp_user_password)
 
 if ! id -u "$FTP_USER" >/dev/null 2>&1; then
