@@ -104,17 +104,24 @@ services:
     build:
       context: ./bonus/netdata
     container_name: netdata
+    pid: host
+    user: root
     networks:
       - inception
+    restart: unless-stopped
     cap_add:
       - SYS_PTRACE
       - SYS_ADMIN
     security_opt:
       - apparmor:unconfined
+    environment:
+      - NETDATA_DISABLE_CLOUD=1
+      - DO_NOT_TRACK=1
+      - NETDATA_ANONYMOUS_STATISTICS=0
     volumes:
-    #  - netdataconfig:/etc/netdata
-    #  - netdatalib:/var/lib/netdata
-    #  - netdatacache:/var/cache/netdata
+      - netdatacache:/opt/netdata/var/cache/netdata
+      - netdataconfig:/opt/netdata/etc/netdata
+      - netdatalib:/opt/netdata/var/lib/netdata
       - /:/host/root:ro,rslave
       - /etc/passwd:/host/etc/passwd:ro
       - /etc/group:/host/etc/group:ro
@@ -123,7 +130,7 @@ services:
       - /sys:/host/sys:ro
       - /etc/os-release:/host/etc/os-release:ro
       - /var/log:/host/var/log:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock
       - /run/dbus:/run/dbus:ro
 
 volumes:
@@ -145,6 +152,24 @@ volumes:
       type: none
       o: bind
       device: ${HOME}/data/redis
+  netdatacache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOME}/data/netdata/cache
+  netdataconfig:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOME}/data/netdata/config
+  netdatalib:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOME}/data/netdata/lib
 
 networks:
   inception:

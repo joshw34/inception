@@ -65,6 +65,9 @@ data-dirs:
 	@mkdir -p $(DATA_DIR)/mariadb
 	@mkdir -p $(DATA_DIR)/wordpress
 	@mkdir -p $(DATA_DIR)/redis
+	@mkdir -p $(DATA_DIR)/netdata/lib
+	@mkdir -p $(DATA_DIR)/netdata/cache
+	@mkdir -p $(DATA_DIR)/netdata/config
 
 build:
 	docker-compose -f $(COMPOSE_FILE) build
@@ -81,10 +84,13 @@ clean: down
 
 fclean: clean
 	@docker run --rm -v $(DATA_DIR):/data alpine sh -c "chmod -R 777 /data && rm -rf /data/*" 2>/dev/null || true
-	@rm -rf $(DATA_DIR)/mariadb/*
-	@rm -rf $(DATA_DIR)/wordpress/*
-	@rm -rf $(DATA_DIR)/redis/*
 	@rm -rf $(DATA_DIR)
+	@docker volume rm inception_mariadb-data 2>/dev/null || true
+	@docker volume rm inception_wordpress-data 2>/dev/null || true
+	@docker volume rm inception_redis-data 2>/dev/null || true
+	@docker volume rm inception_netdatacache 2>/dev/null || true
+	@docker volume rm inception_netdataconfig 2>/dev/null || true
+	@docker volume rm inception_netdatalib 2>/dev/null || true
 	@rm -rf $(SECRETS_DIR)
 	@rm -rf ./srcs/.env
 	@echo "Full clean complete"
