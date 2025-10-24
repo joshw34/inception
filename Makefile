@@ -12,6 +12,7 @@ DB_PASS = $(SECRETS_DIR)/db_password.txt
 WP_ADMIN_PASS = $(SECRETS_DIR)/wp_admin_password.txt
 WP_USER_PASS = $(SECRETS_DIR)/wp_user_password.txt
 FTP_USER_PASS = $(SECRETS_DIR)/ftp_user_password.txt
+REDIS_PASS = $(SECRETS_DIR)/redis_password.txt
 
 all: setup build up
 
@@ -55,10 +56,15 @@ secrets:
 		openssl rand -base64 32 > $(FTP_USER_PASS); \
 		echo "Generated ftp_user_password"; \
 	fi
+	@if [ ! -f $(REDIS_PASS) ]; then \
+		openssl rand -base64 32 > $(REDIS_PASS); \
+		echo "Generated redis_password"; \
+	fi
 
 data-dirs:
 	@mkdir -p $(DATA_DIR)/mariadb
 	@mkdir -p $(DATA_DIR)/wordpress
+	@mkdir -p $(DATA_DIR)/redis
 
 build:
 	docker-compose -f $(COMPOSE_FILE) build
@@ -77,6 +83,8 @@ fclean: clean
 	@docker run --rm -v $(DATA_DIR):/data alpine sh -c "chmod -R 777 /data && rm -rf /data/*" 2>/dev/null || true
 	@rm -rf $(DATA_DIR)/mariadb/*
 	@rm -rf $(DATA_DIR)/wordpress/*
+	@rm -rf $(DATA_DIR)/redis/*
+	@rm -rf $(DATA_DIR)
 	@rm -rf $(SECRETS_DIR)
 	@rm -rf ./srcs/.env
 	@echo "Full clean complete"

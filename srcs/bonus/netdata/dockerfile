@@ -1,0 +1,38 @@
+FROM alpine:3.22.2
+
+RUN apk update && \
+    apk add --no-cache netdata netdata-python bash
+
+RUN mkdir -p \
+    /etc/netdata \
+    /var/lib/netdata \
+    /var/cache/netdata \
+    /host/root \
+    /host/etc/passwd \
+    /host/etc/group \
+    /etc/localtime \
+    /host/proc \
+    /host/sys \
+    /host/etc/os-release \
+    /host/var/log \
+    /var/run/docker.sock \
+    /run/dbus
+
+RUN chown -R netdata:netdata \
+    /etc/netdata \
+    /var/lib/netdata \
+    /var/cache/netdata \
+    /host/root \
+    /host/etc/passwd \
+    /host/etc/group \
+    /etc/localtime \
+    /host/proc \
+    /host/sys \
+    /host/etc/os-release \
+    /host/var/log \
+    /var/run/docker.sock \
+    /run/dbus
+
+EXPOSE 19999
+
+CMD ["/usr/bin/netdata", "-D"]

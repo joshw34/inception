@@ -3,6 +3,7 @@
 MYSQL_PASSWORD=$(cat /run/secrets/db_password)
 WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
+REDIS_PASSWORD=$(cat /run/secrets/redis_password)
 
 echo "Waiting for MariaDB..."
 RETRIES=30
@@ -27,7 +28,7 @@ echo "MariaDB is ready"
 cd /var/www/html
 
 if [ ! -f wp-config.php ]; then
-    echo "Creating wp-config.php..."
+    echo "Creating wp-config.php"
     wp config create \
         --dbname="$MYSQL_DATABASE" \
         --dbuser="$MYSQL_USER" \
@@ -37,7 +38,7 @@ if [ ! -f wp-config.php ]; then
 fi
 
 if ! wp core is-installed --allow-root 2>/dev/null; then
-    echo "Installing WordPress..."
+    echo "Installing WordPress"
     wp core install \
         --url="$WP_URL" \
         --title="$WP_TITLE" \
@@ -46,14 +47,24 @@ if ! wp core is-installed --allow-root 2>/dev/null; then
         --admin_email="$WP_ADMIN_EMAIL" \
         --allow-root
 
-    echo "Creating second user..."
+    echo "Creating second user"
     wp user create \
         "$WP_USER" \
         "$WP_USER_EMAIL" \
         --user_pass="$WP_USER_PASSWORD" \
         --role=author \
         --allow-root
-    
+
+    echo "Installing Redis Object Cache Plugin"
+    wp plugin install --activate https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip
+    sed -i '40i\
+define( '\''WP_REDIS_HOST'\'', '\''redis'\'' );\
+define( '\''WP_REDIS_PORT'\'', 6379 );\
+define( '\''WP_REDIS_PASSWORD'\'', '\'$REDIS_PASSWORD\'' );\
+define( '\''WP_REDIS_TIMEOUT'\'', 1 );\
+define( '\''WP_REDIS_READ_TIMEOUT'\'', 1 );
+' wp-config.php
+    wp redis enable 
     echo "WordPress setup complete!"
 fi
 

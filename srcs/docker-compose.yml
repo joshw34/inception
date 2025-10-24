@@ -35,6 +35,7 @@ services:
       - db_password
       - wp_admin_password
       - wp_user_password
+      - redis_password
     volumes:
       - wordpress-data:/var/www/html
     networks:
@@ -61,7 +62,7 @@ services:
 
   ftp:
     build:
-      context: ./requirements/ftp
+      context: ./bonus/ftp
     container_name: ftp
     environment:
       - FTP_USER=${FTP_USER}
@@ -79,6 +80,52 @@ services:
       - wordpress
     restart: always
 
+  redis:
+    build:
+      context: ./bonus/redis
+    container_name: redis
+    secrets:
+      - redis_password
+    volumes:
+      - redis-data:/var/lib/redis
+    networks:
+      - inception
+    restart: always
+
+  adminer:
+    build:
+      context: ./bonus/adminer
+    container_name: adminer
+    networks:
+      - inception
+    restart: always
+
+  netdata:
+    build:
+      context: ./bonus/netdata
+    container_name: netdata
+    networks:
+      - inception
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+    #  - netdataconfig:/etc/netdata
+    #  - netdatalib:/var/lib/netdata
+    #  - netdatacache:/var/cache/netdata
+      - /:/host/root:ro,rslave
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /var/log:/host/var/log:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /run/dbus:/run/dbus:ro
+
 volumes:
   mariadb-data:
     driver: local
@@ -92,6 +139,12 @@ volumes:
       type: none
       o: bind
       device: ${HOME}/data/wordpress
+  redis-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOME}/data/redis
 
 networks:
   inception:
@@ -108,3 +161,5 @@ secrets:
     file: ../secrets/wp_user_password.txt
   ftp_user_password:
     file: ../secrets/ftp_user_password.txt
+  redis_password:
+    file: ../secrets/redis_password.txt
