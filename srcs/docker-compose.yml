@@ -50,6 +50,9 @@ services:
     container_name: nginx
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
+      - NETDATA_USER=${NETDATA_USER}
+    secrets:
+      - netdata_password
     ports:
       - "443:443"
     volumes:
@@ -130,7 +133,7 @@ services:
       - /sys:/host/sys:ro
       - /etc/os-release:/host/etc/os-release:ro
       - /var/log:/host/var/log:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /run/dbus:/run/dbus:ro
 
 volumes:
@@ -188,3 +191,5 @@ secrets:
     file: ../secrets/ftp_user_password.txt
   redis_password:
     file: ../secrets/redis_password.txt
+  netdata_password:
+    file: ../secrets/netdata_password.txt

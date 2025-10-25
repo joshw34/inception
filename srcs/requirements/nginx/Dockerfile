@@ -1,7 +1,7 @@
 FROM alpine:3.22.2
 
 RUN apk update && \
-    apk add --no-cache nginx openssl
+    apk add --no-cache nginx openssl apache2-utils
 
 COPY ./files/nginx.conf /etc/nginx/nginx.conf
 COPY ./files/entrypoint.sh /usr/local/bin/entrypoint.sh

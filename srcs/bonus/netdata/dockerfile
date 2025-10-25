@@ -1,6 +1,7 @@
 FROM alpine:3.22.2
 
-RUN wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /tmp/netdata-kickstart.sh --stable-channel --disable-telemetry
+RUN wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && \
+    sh /tmp/netdata-kickstart.sh --stable-channel --disable-telemetry
 
 COPY ./files/docker.conf /opt/netdata/etc/netdata/go.d/docker.conf
 

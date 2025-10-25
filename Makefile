@@ -13,6 +13,7 @@ WP_ADMIN_PASS = $(SECRETS_DIR)/wp_admin_password.txt
 WP_USER_PASS = $(SECRETS_DIR)/wp_user_password.txt
 FTP_USER_PASS = $(SECRETS_DIR)/ftp_user_password.txt
 REDIS_PASS = $(SECRETS_DIR)/redis_password.txt
+NETDATA_PASS = $(SECRETS_DIR)/netdata_password.txt
 
 all: setup build up
 
@@ -31,6 +32,7 @@ env-file:
 		echo "WP_TITLE=Inception" >> ./srcs/.env; \
 		echo "WP_URL=https://$(DOMAIN_NAME)" >> ./srcs/.env; \
 		echo "FTP_USER=$(USER_LOGIN)" >> ./srcs/.env; \
+		echo "NETDATA_USER=$(USER_LOGIN)" >> ./srcs/.env; \
 		echo "Generated .env file";\
 	fi
 
@@ -59,6 +61,10 @@ secrets:
 	@if [ ! -f $(REDIS_PASS) ]; then \
 		openssl rand -base64 32 > $(REDIS_PASS); \
 		echo "Generated redis_password"; \
+	fi
+	@if [ ! -f $(NETDATA_PASS) ]; then \
+		openssl rand -base64 32 > $(NETDATA_PASS); \
+		echo "Generated netdata_password"; \
 	fi
 
 data-dirs:

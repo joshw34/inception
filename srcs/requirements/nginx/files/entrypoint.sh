@@ -2,6 +2,8 @@
 
 set -e
 
+NETDATA_PASS=$(cat /run/secrets/netdata_password)
+
 if [ ! -f /etc/nginx/ssl/cert.crt ]; then
   mkdir -p /etc/nginx/ssl
   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
@@ -12,5 +14,7 @@ if [ ! -f /etc/nginx/ssl/cert.crt ]; then
 fi
 
 sed -i "s/\${DOMAIN_NAME}/$DOMAIN_NAME/g" /etc/nginx/nginx.conf
+
+htpasswd -cb /etc/nginx/netdata_password $NETDATA_USER $NETDATA_PASS
 
 exec nginx -g "daemon off;"
