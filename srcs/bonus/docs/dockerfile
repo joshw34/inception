@@ -7,4 +7,4 @@ COPY ./files/* /var/www/html
 
 LABEL description="docs"
 
-CMD ["busybox-extras", "httpd", "-p", "8080", "-h", "/var/www/html"]
+CMD ["busybox-extras", "httpd", "-f", "-p", "8080", "-h", "/var/www/html"]
