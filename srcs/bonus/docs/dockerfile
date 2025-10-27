@@ -3,7 +3,7 @@ FROM alpine:3.22.2
 RUN apk update && apk add --no-cache busybox-extras && \
     mkdir -p /var/www/html
 
-COPY ./files/* /var/www/html
+COPY ./files/ /var/www/html
 
 LABEL description="docs"
 
