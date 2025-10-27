@@ -44,6 +44,3 @@ EXPOSE 9000
 LABEL description="wordpress"
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-
-

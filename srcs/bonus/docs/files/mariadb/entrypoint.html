@@ -1,0 +1,278 @@
+<h1><strong>mariadb</strong></h1>
+<h2><strong>entrypoint.sh</strong></h2>
+<p><strong><img src="./images/entrypoint.png" alt="mariadb entrypoint script" /></strong></p>
+<h3>set -e</h3>
+<ul>
+<li>
+<p>Exit on error</p>
+</li>
+<li>
+<p>If any command fails, the script will exit and&nbsp;mariadb&nbsp;will not run with incomplete setup</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password) /&nbsp;MYSQL_PASSWORD=$(cat /run/secrets/db_password)</h3>
+<ul>
+<li>
+<p>Reads passwords from Docker secret files (mounted at /run/secrets/)</p>
+</li>
+<li>
+<p>Secrets created by Makefile (openssl rand -base64 32)</p>
+</li>
+<li>
+<p>Passed to container via docker-compose.yml secrets: section</p>
+</li>
+<li>
+<p>Mounted as read-only files (not environment variables)</p>
+</li>
+<li>
+<p>secrets/ dir ignored by git (not stored in repo)</p>
+</li>
+<li>
+<p>MYSQL_DATABASE and MYSQL_USER passed as env variables (non-sensitive)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>if [ ! -d "/var/lib/mysql/mysql" ]; then</h3>
+<ul>
+<li>
+<p>Checks if mysql system database exists</p>
+</li>
+<li>
+<p>mysql/ is created by mysql_install_db on first run</p>
+</li>
+<li>
+<p>If mysql/ exists = database already initialised, skip setup</p>
+</li>
+<li>
+<p>If mysql/ missing = first run, initialise database</p>
+</li>
+<li>
+<p>Works because /var/lib/mysql is mounted from host (persistent)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>mysql_install_db --user=mysql --datadir=/var/lib/mysql &gt; /dev/null</h3>
+<ul>
+<li>
+<p>Initializes MariaDB system database structure</p>
+</li>
+<li>
+<p>--user=mysql: Run as mysql user (security, not root)</p>
+</li>
+<li>
+<p>--datadir=/var/lib/mysql: Where to create database files (volume mount)</p>
+</li>
+<li>
+<p>&gt; /dev/null: Suppress stdout (silence verbose output)</p>
+</li>
+<li>
+<p>Creates mysql/, performance_schema/, and system tables</p>
+</li>
+<li>
+<p>Must run before MariaDB can start</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>mysqld --user=mysql --bootstrap &lt;&lt; EOF</h3>
+<ul>
+<li>
+<p>Runs MariaDB in bootstrap mode (special initialization mode)</p>
+</li>
+<li>
+<p>Allows running SQL commands during initial setup</p>
+</li>
+<li>
+<p>--bootstrap: Single-user mode, reads SQL from stdin, then exits</p>
+</li>
+<li>
+<p>--user=mysql: Run as mysql user (security)</p>
+</li>
+<li>
+<p>&lt;&lt; EOF: Heredoc - feeds SQL commands to stdin</p>
+</li>
+<li>
+<p>Used for: setting passwords, creating users, initial configuration</p>
+</li>
+<li>
+<p>Exits after SQL completes&nbsp;(EOF)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>FLUSH PRIVILEGES</h3>
+<ul>
+<li>
+<p>Reloads privilege tables from disk into memory</p>
+</li>
+<li>
+<p>Does NOT reset to defaults - just refreshes cache</p>
+</li>
+<li>
+<p>Required after direct table modifications (DELETE/INSERT/UPDATE on mysql.user)</p>
+</li>
+<li>
+<p>NOT required after GRANT/REVOKE/CREATE USER/ALTER USER (auto-flush)</p>
+</li>
+<li>
+<p>Used twice in script:</p>
+</li>
+<li>
+<p>First: Clean state before modifications</p>
+</li>
+<li>
+<p>Last: Ensure all changes applied</p>
+</li>
+<li>
+<p>Like "reload config" - applies changes without reset</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>DELETE FROM mysql.user WHERE User=''</h3>
+<ul>
+<li>
+<p>Removes anonymous users (empty username)</p>
+</li>
+<li>
+<p>mysql_install_db creates these by default (legacy MySQL behavior)</p>
+</li>
+<li>
+<p>Security risk: allows connections without authentication</p>
+</li>
+<li>
+<p>After deletion: only authenticated users can connect</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')</h3>
+<ul>
+<li>
+<p>Deletes any non-local root users</p>
+</li>
+<li>
+<p>Remote users do not require root access</p>
+</li>
+<li>
+<p>Modern mariadb may not create remote root, but older versions might</p>
+</li>
+<li>
+<p>Defensive programming - ensures security regardless of version</p>
+</li>
+<li>
+<p>Main target: root@'%' (root from anywhere)</p>
+</li>
+<li>
+<p>Keeps only local root: localhost (socket), 127.0.0.1 (IPv4), ::1 (Ipv6)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}'</h3>
+<ul>
+<li>
+<p>Sets password for root@'localhost' user</p>
+</li>
+<li>
+<p>Password from Makefile-generated secret (via Docker secrets)</p>
+</li>
+<li>
+<p>${MYSQL_ROOT_PASSWORD} = env variable substitution</p>
+</li>
+<li>
+<p>&lsquo;localhost&rsquo; = connects via unix socket</p>
+</li>
+<li>
+<p>After this: root requires password for authentication</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</h3>
+<ul>
+<li>
+<p>If database doesn't exist, create it</p>
+</li>
+<li>
+<p>\` = escaped backticks (protects special characters in database name)</p>
+</li>
+<li>
+<p>${MYSQL_DATABASE} = variable (e.g., 'wordpress')</p>
+</li>
+<li>
+<p>CHARACTER SET utf8mb4 / COLLATE utf8mb4_unicode_ci</p>
+</li>
+<li>
+<p>Ensures database uses same encoding as server default</p>
+</li>
+<li>
+<p>Safe to run multiple times (IF NOT EXISTS)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}'</h3>
+<ul>
+<li>
+<p>Creates user if doesn't exist</p>
+</li>
+<li>
+<p>${MYSQL_USER} = username from .env file</p>
+</li>
+<li>
+<p>@'%' = can connect from any host (required for Docker networking)</p>
+</li>
+<li>
+<p>${MYSQL_PASSWORD} = password from Docker secret (Makefile-generated)</p>
+</li>
+<li>
+<p>IF NOT EXISTS = safe to run multiple times (no error if user exists)</p>
+</li>
+<li>
+<p>WordPress container uses this user to connect to database</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%'</h3>
+<ul>
+<li>
+<p>Grants all privileges to wordpress_user on wordpress database</p>
+</li>
+<li>
+<p>ALL PRIVILEGES = SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, etc</p>
+</li>
+<li>
+<p>\`${MYSQL_DATABASE}\`.* = all tables in wordpress database</p>
+</li>
+<li>
+<p>.* = wildcard for all tables</p>
+</li>
+<li>
+<p>TO '${MYSQL_USER}'@'%' = for this specific&nbsp;<a title="mailto:user@host" href="mailto:user@host"><u>user@host</u></a></p>
+</li>
+<li>
+<p>User can: read, write, delete, modify tables, create/drop tables</p>
+</li>
+<li>
+<p>Limited to wordpress database only (can't access mysql, other databases)</p>
+</li>
+<li>
+<p>Principle of least privilege - full access to own database, nothing else</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>exec mysqld --user=mysql &ndash;console</h3>
+<ul>
+<li>
+<p>Starts the mysql daemon as the mysql user (only access to own data dirs)</p>
+</li>
+<li>
+<p>--console = logs to stdout/stderr</p>
+</li>
+<li>
+<p>keeps the process in the foreground instead so the docker container stays alive</p>
+</li>
+<li>
+<p>does the same job here as the 'daemon off' option for nginx in the nginx container entrypoint.sh</p>
+</li>
+<li>
+<p>exec replaces the shell process with mysqld (makes it PID 1 for proper signal handling &ndash;&nbsp;docker can pass sigterm etc directly to mysqld instead of the shell wrapper)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Return: <a title="Go to mariadb homepage" href="index.html">mariadb</a>&nbsp; <a title="Go to inception homepage" href="../index.html">home</a></strong></p>

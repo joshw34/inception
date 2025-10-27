@@ -1,0 +1,361 @@
+<h1>nginx</h1>
+<h2>nginx.conf</h2>
+<p><img src="./images/nginxconf.png" alt="nginx config" /></p>
+<h3>worker_processes auto</h3>
+<ul>
+<li>
+<p>This sets the number of worker processes used by nginx based on the number of available cpu cores.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>events block</h3>
+<ul>
+<li>
+<p>Deals with event processing and connections handling behaviour</p>
+</li>
+</ul>
+<h4>&nbsp;worker_connections 1024</h4>
+<ul>
+<li>
+<p>Max number of connections per worker thread</p>
+</li>
+<li>
+<p>Can be set higher</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>http block</h3>
+<ul>
+<li>
+<p>General http server settings</p>
+</li>
+<li>
+<p>Request handling and routing</p>
+</li>
+</ul>
+<h4>include /etc/nginx/mime.types</h4>
+<ul>
+<li>
+<p>File which maps file extensions to MIME types</p>
+</li>
+<li>
+<p>Tells browsers how to interpret served files</p>
+</li>
+</ul>
+<h4>default_type application/octet-stream</h4>
+<ul>
+<li>
+<p>If MIME type is not found it is uses application/octet-stream</p>
+</li>
+<li>
+<p>Means &lsquo;generic binary data&rsquo;</p>
+</li>
+<li>
+<p>Browser will typically download rather than display/run</p>
+</li>
+</ul>
+<h4><span style="text-decoration: underline;"><strong>server blocks</strong></span></h4>
+<ul>
+<li>
+<p>Define the ports listened to and the domain names they respond to</p>
+</li>
+</ul>
+<h4>listen 443</h4>
+<ul>
+<li>
+<p>Specifies the port to listen on and whether to use SSL/TLS (http vs https)</p>
+</li>
+</ul>
+<h4>server_name ${DOMAIN_NAME}</h4>
+<ul>
+<li>
+<p>The domain name that this server responds to</p>
+</li>
+<li>
+<p>${DOMAIN_NAME} will be repaced using the value from .env by sed in dockerfile during build</p>
+</li>
+</ul>
+<h4>root /var/www/html</h4>
+<ul>
+<li>
+<p>Location of the root of the website filesystem</p>
+</li>
+<li>
+<p>Combined with URI to find the requested file</p>
+</li>
+<li>
+<p>/var/www/html is a widely used convention, any location can be used</p>
+</li>
+</ul>
+<h4>index index.php</h4>
+<ul>
+<li>
+<p>The default file nginx will serve when a directory is requested</p>
+</li>
+<li>
+<p>Will search in the order specified</p>
+</li>
+<li>
+<p>403 if not found</p>
+</li>
+</ul>
+<h4>ssl_certificate / ssl_certificate_key</h4>
+<ul>
+<li>
+<p>Specify the SSL/TLS public certificate and private key to be used for https encryption</p>
+</li>
+<li>
+<p>Files are PEM encoded (Privacy Enhanced Mail).&nbsp;This is an old and no longer used encryption standard for email but it&rsquo;s encoding format is still used. Both files could be .pem but .crt and .key are more commonly used</p>
+</li>
+</ul>
+<h4>ssl_protocols TLSv1.2 TLSv1.3</h4>
+<ul>
+<li>
+<p>The SSL/TLS protocol versions that the server will accept</p>
+</li>
+<li>
+<p>TLSv1.2 (2008, still widely used, supported everywhere)</p>
+</li>
+<li>
+<p>TLSv1.3 (2018, latest version, faster, most secure)</p>
+</li>
+<li>
+<p>SSLv2/v3 are broken and have known vulnerabilities, TLSv1.0/v1.1 are deprecated and no longer considered secure</p>
+</li>
+</ul>
+<h4><span style="text-decoration: underline;">location blocks</span></h4>
+<ul>
+<li>
+<p>Routing rules</p>
+</li>
+<li>
+<p>If URL matches rule &rarr; serve file / send to handler</p>
+</li>
+<li>
+<p>location / - catch all, request not matching more specific blocks</p>
+</li>
+<li>
+<p>~* = case insensitive regex</p>
+</li>
+<li>
+<p>^ = must begin with</p>
+</li>
+<li>
+<p>* = 0 or more characters</p>
+</li>
+<li>
+<p>\. = literal . (. normally represents &lsquo;any char&rsquo;)</p>
+</li>
+<li>
+<p>$ = end of string</p>
+</li>
+</ul>
+<h4>try_files $uri $uri/ /index.php?$args;</h4>
+<ul>
+<li>
+<p>$uri - Try to serve as a file (images, CSS, JS, etc.)</p>
+</li>
+<li>
+<p>$uri/ - Try to serve as a directory (looks for index files)</p>
+</li>
+<li>
+<p>/index.php?$args - Fallback: send to WordPress with query string</p>
+</li>
+</ul>
+<h4><span style="text-decoration: underline;"><strong>adminer reverse proxy</strong></span></h4>
+<h4>proxy_pass http://adminer:8080/</h4>
+<ul>
+<li>
+<p>Passes requests for /adminer/* to the adminer container port 8080</p>
+</li>
+<li>
+<p>The trailing &lsquo;/&rsquo; removes the &lsquo;/adminer/&rsquo; prefix</p>
+</li>
+<li>
+<p>Uses http as nginx handles ssl for external connections. Internal docker network connections are safe to use http</p>
+</li>
+</ul>
+<h4>proxy_set_header Host $host</h4>
+<ul>
+<li>
+<p>Tells the adminer container what host the user requested</p>
+</li>
+<li>
+<p>$host created by nginx</p>
+</li>
+<li>
+<p>Without:</p>
+</li>
+<li>
+<p>User requests:&nbsp;https://user.42.fr/adminer/</p>
+</li>
+<li>
+<p>Nginx forwards to:&nbsp;http://adminer:8080</p>
+</li>
+<li>
+<p>Adminer receives: Host: adminer:8080</p>
+</li>
+<li>
+<p>With:</p>
+</li>
+<li>
+<p>Adminer receives: Host: user.42.fr</p>
+</li>
+<li>
+<p>Required for redirects etc adminer:8080/login vs user.42.fr/login</p>
+</li>
+</ul>
+<h4>proxy_set_header X-Real-IP $remote_addr</h4>
+<ul>
+<li>
+<p>Tells the container the ip address that the request originated from</p>
+</li>
+<li>
+<p>$remote_addr created by nginx</p>
+</li>
+<li>
+<p>Without this the requests would appear to be from nginx</p>
+</li>
+<li>
+<p>Logs etc would not show who tried to connect externally, only that a request came from nginx</p>
+</li>
+</ul>
+<h4>proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for</h4>
+<ul>
+<li>
+<p>Preserves the chain of client IP address through proxies</p>
+</li>
+<li>
+<p>$proxy_add_x_forwarded_for&nbsp;created dby nginx</p>
+</li>
+<li>
+<p>E.g.&nbsp;X-Forwarded-For: 203.0.113.195, 70.41.3.18</p>
+</li>
+<li>
+<p>Also useful for logging real client IP addresses</p>
+</li>
+</ul>
+<h4>proxy_set_header X-Forwarded-Proto $scheme</h4>
+<ul>
+<li>
+<p>Tells the adminer backend which protocol was used (http or https)</p>
+</li>
+<li>
+<p>$scheme created by nginx</p>
+</li>
+<li>
+<p>Adminer knows that the connection to the client is behind https even though the internal connection is http</p>
+</li>
+<li>
+<p>Adminer will used https:// instead of http:// for redirects</p>
+</li>
+</ul>
+<h4><span style="text-decoration: underline;"><strong>netdata reverse proxy</strong></span></h4>
+<h4>auth_basic "Netdata Monitoring"</h4>
+<ul>
+<li>
+<p>The string that will appear in the password popup</p>
+</li>
+</ul>
+<h4>auth_basic_user_file /etc/nginx/netdata_password</h4>
+<ul>
+<li>
+<p>The file containing the username and password hash of the authorised user</p>
+</li>
+</ul>
+<h4>proxy_http_version 1.1;</h4>
+<ul>
+<li>
+<p>Forces Nginx to use HTTP/1.1&nbsp;when communicating with netdata</p>
+</li>
+<li>
+<p>WebSockets and connection upgrades require HTTP/1.1</p>
+</li>
+<li>
+<p>WebSockets upgrade a single HTTP connection to a bi-directional communication channel&nbsp;(live data stream from netdata)</p>
+</li>
+</ul>
+<h4>proxy_set_header Upgrade $http_upgrade</h4>
+<ul>
+<li>
+<p>Tells the server to switch protocols from HTTP to WebSocket</p>
+</li>
+</ul>
+<h4>proxy_set_header Connection "upgrade"</h4>
+<ul>
+<li>
+<p>Forces Nginx to include the correct &ldquo;Connection: upgrade&rdquo; header in the proxied request</p>
+</li>
+</ul>
+<h4><span style="text-decoration: underline;">php handler</span></h4>
+<h4>try_files $uri =404</h4>
+<ul>
+<li>
+<p>Security check</p>
+</li>
+<li>
+<p>Without:</p>
+</li>
+<li>
+<p>Request: /uploads/image.jpg/fake.php</p>
+</li>
+<li>
+<p>PHP-FPM: "fake.php doesn't exist, but image.jpg does"</p>
+</li>
+<li>
+<p>PHP-FPM: Executes image.jpg as PHP code! ✗</p>
+</li>
+<li>
+<p>Attacker: Can upload malicious "image" with PHP code</p>
+</li>
+<li>
+<p>With:</p>
+</li>
+<li>
+<p>Request: /fake.php (doesn't exist)</p>
+</li>
+<li>
+<p>Nginx: "fake.php doesn't exist" &rarr; Returns 404 ✓</p>
+</li>
+<li>
+<p>Never passes to PHP-FPM</p>
+</li>
+</ul>
+<h4>fastcgi_pass wordpress:9000</h4>
+<ul>
+<li>
+<p>Send php requests to PHP-FPM on wordpress server, port 9000</p>
+</li>
+</ul>
+<h4>fastcgi_index index.php</h4>
+<ul>
+<li>
+<p>If directory requested, try `index.php` as the default file</p>
+</li>
+</ul>
+<h4>include fastcgi_params</h4>
+<ul>
+<li>
+<p>Includes a file with standard FastCGI parameters</p>
+</li>
+<li>
+<p>/etc/nginx/fastcgi_params</p>
+</li>
+</ul>
+<h4>fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name</h4>
+<ul>
+<li>
+<p>Tells PHP-FPM which file to execute</p>
+</li>
+<li>
+<p>$document_root = /var/www/html</p>
+</li>
+<li>
+<p>$fastcgi_script_name = /index.php</p>
+</li>
+<li>
+<p>SCRIPT_FILENAME = /var/www/html/index.php</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Return:</strong> <a title="Go to nginx homepage" href="index.html">nginx</a>&nbsp; <a title="Go to inception homepage" href="../index.html">home</a></p>

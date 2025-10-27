@@ -1,0 +1,62 @@
+<h1>adminer</h1>
+<h2>dockerfile</h2>
+<p><img src="./images/dockerfile.png" alt="Adminer dockerfile" /></p>
+<h3>apk add</h3>
+<ul>
+<li>
+<p>Install the php interpreter and plugins requitred to run adminer</p>
+</li>
+<li>
+<p>wget to download the adminer php files</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>mkdir -p /var/www/html</h3>
+<ul>
+<li>
+<p>Stanadard directory for web files</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>wget -O</h3>
+<ul>
+<li>
+<p>Download the adminer php file and rename to index.php</p>
+</li>
+<li>
+<p>Using the smaller english-only &amp; mysql/mariadb-only version</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>WORKDIR /var/www/html</h3>
+<ul>
+<li>
+<p>Set the working directory the directory where adminer php files are stored</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>EXPOSE 8080</h3>
+<ul>
+<li>
+<p>The standard port used by adminer</p>
+</li>
+<li>
+<p>No externally exposed ports, connect via nginx reverse-proxy</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>CMD ["php84", "-S", "0.0.0.0:8080", "-t", "/var/www/html"]</h3>
+<ul>
+<li>
+<p>-S&nbsp; = Start built-in web server on the given local address and port</p>
+</li>
+<li>
+<p>-t&nbsp; = Specify the document root to be used by the built-in web server</p>
+</li>
+<li>
+<p>Process will become PID1</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return: <a title="Adminer homepage" href="index.html">adminer</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>
+<p>&nbsp;</p>

@@ -1,0 +1,110 @@
+<h1>nginx</h1>
+<h2>entrypoint.sh</h2>
+<p><strong><img src="./images/entrypoint.png" alt="nginx entrypoint script" /></strong></p>
+<h3>set -e</h3>
+<ul>
+<li>
+<p>Exit on error</p>
+</li>
+<li>
+<p>If any command fails, the script will exit and nginx will not run with incomplete setup</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>if [ ! -f /etc/nginx/ssl/cert.crt ]; then</h3>
+<ul>
+<li>
+<p>If the ssl cert hasn&rsquo;t already been generated, run the command</p>
+</li>
+<li>
+<p>-f = exists as regular file</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>mkdir -p /etc/nginx/ssl</h3>
+<ul>
+<li>
+<p>Create ssl directory in nginx config directory</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>openssl req</h3>
+<ul>
+<li>
+<p>Openssl certificate request tool</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>x509</h3>
+<ul>
+<li>
+<p>Create a self-signed certificate</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>nodes</h3>
+<ul>
+<li>
+<p>Don&rsquo;t encrypt private key (no passphrase needed)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>days 365</h3>
+<ul>
+<li>
+<p>Valid for 1 year</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>newkey rsa:2048</h3>
+<ul>
+<li>
+<p>Generate rsa private key with 2048 bits</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>keyout / out</h3>
+<ul>
+<li>
+<p>Where to save private key and public certificate</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>subj</h3>
+<ul>
+<li>
+<p>Certificate subject (identity info)</p>
+</li>
+<li>
+<p>${DOMAIN_NAME} inherited from .env via docker-compose.yaml</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>sed -i "s/\${DOMAIN_NAME}/$DOMAIN_NAME/g" /etc/nginx/nginx.conf</h3>
+<ul>
+<li>
+<p>Replace all instances of ${DOMAIN_NAME} in nginx.conf with env var DOMAIN_NAME inherited from docker-compose.yml</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>htpasswd -cb /etc/nginx/netdata_password $NETDATA_USER $NETDATA_PASS</h3>
+<ul>
+<li>
+<p>Create password for netdata (bonus). Username and password created by makefile and passed via env variable / docker secrets respectively</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>exec nginx -g "daemon off;"</h3>
+<ul>
+<li>
+<p>Run nginx without daemon</p>
+</li>
+<li>
+<p>-g = global config directive</p>
+</li>
+<li>
+<p>If run as a daemon it would detach from terminal but docker needs a foreground process</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Return:</strong> <a title="Go to nginx homepage" href="index.html">nginx</a>&nbsp; <a title="Go to inception homepage" href="../index.html">home</a></p>

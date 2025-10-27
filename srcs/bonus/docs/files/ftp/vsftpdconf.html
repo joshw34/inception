@@ -1,0 +1,211 @@
+<h1>ftp</h1>
+<h2>vsftpd.conf</h2>
+<p><img src="./images/vsftpdconf.png" alt="vsftpd.conf" /></p>
+<h3>seccomp_sandbox=NO</h3>
+<ul>
+<li>
+<p>Security sandboxing feature that causes problems in alpine</p>
+</li>
+<li>
+<p>Server does not work with this setting enabled on alpine</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>local_enable=YES</h3>
+<ul>
+<li>
+<p>Local user accounts used to login</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>write_enable=YES</h3>
+<ul>
+<li>
+<p>Controls whether any FTP commands which change the filesystem are allowed or not</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>chroot_local_user=YES</h3>
+<ul>
+<li>
+<p>users will be (by default) placed in a chroot() jail in their home directory after login</p>
+</li>
+<li>
+<p>The home directory will appear to be &ldquo;/&rdquo;, they can not navigate above this level</p>
+</li>
+<li>
+<p>Limits users to their own home and subdirectories</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>passwd_chroot_enable=YES</h3>
+<ul>
+<li>
+<p>Each user's jail is derived from their home directory string in /etc/passwd</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>allow_writeable_chroot=YES</h3>
+<ul>
+<li>
+<p>Allows users to change the filesystem in their chroot</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>ftpd_banner=Inception Wordpress Data FTP Server</h3>
+<ul>
+<li>
+<p>Message displayed when loggin in to server</p>
+</li>
+<li>
+<p>Replaces generic server message</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>local_umask=022</h3>
+<ul>
+<li>
+<p>Set file permissions to read/write for owner and read for group/others</p>
+</li>
+<li>
+<p>As the uid/gid matches wp-data user on wordpress server, any files uploaded will be owned by the wp-data user from the wordpress container perspective</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>pasv_enable=YES</h3>
+<ul>
+<li>
+<p>Allow passive mode data connections</p>
+</li>
+<li>
+<p>Active mode can cause connection issues on clients as the data connection is server initiated. This is often rejected by client firewalls</p>
+</li>
+<li>
+<p>In passive mode the server selects a data transfer port from the rangeprovided below but the client initiates the data connection, this is not normally blocked by client firewall</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>pasv_max_port=50010</h3>
+<ul>
+<li>
+<p>Upper bound of port range available for passive data transfer</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>pasv_min_port=50000</h3>
+<ul>
+<li>
+<p>Lower bound of port range available for passive data transfer</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>anonymous_enable=NO</h3>
+<ul>
+<li>
+<p>Controls whether anonymous logins are permitted or not. If enabled, both the usernames&nbsp;ftp&nbsp;and&nbsp;anonymous&nbsp;are recognised as anonymous logins</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>ssl_enable=YES</h3>
+<ul>
+<li>
+<p>Supports ssl for command and data connections</p>
+</li>
+<li>
+<p>Some clients do not support it but without ssl enabled all data including user names / passwords is sent in plain</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>rsa_cert_file=/etc/ssl/private/vsftpd.crt</h3>
+<ul>
+<li>
+<p>SSL certificate used for encrypting sessions</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>rsa_private_key_file=/etc/ssl/private/vsftpd.key</h3>
+<ul>
+<li>
+<p>SSL private key to be used for encrypting sessions</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>force_local_data_ssl=YES</h3>
+<ul>
+<li>
+<p>All non-anonymous logins are forced to use a secure SSL connection in order to send and receive data on data connections</p>
+</li>
+<li>
+<p>Files uploaded/downloaded are encrypted</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>force_local_logins_ssl=YES</h3>
+<ul>
+<li>
+<p>All non-anonymous logins are forced to use a secure SSL connection in order to send the password</p>
+</li>
+<li>
+<p>Server passwords cannot be intercepted</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>ssl_tlsv1=YES</h3>
+<ul>
+<li>
+<p>Permits&nbsp;TLS v1 protocol connections</p>
+</li>
+<li>
+<p>Preferred method by default, only protocol version allowed by this config</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>ssl_sslv2=NO</h3>
+<ul>
+<li>
+<p>SSLv2 is unsecure</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>ssl_sslv3=NO</h3>
+<ul>
+<li>
+<p>SSLv3 is unsecure</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>require_ssl_reuse=NO</h3>
+<ul>
+<li>
+<p>All SSL data connections are required to exhibit SSL session reuse (which proves that they know the same master secret as the control channel)</p>
+</li>
+<li>
+<p>Can break compatibility with many ftp clients</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>ssl_ciphers=HIGH</h3>
+<ul>
+<li>
+<p>only allow &ldquo;high-strength&rdquo; encryption ciphers&nbsp;during TLS handshakes&nbsp;and&nbsp;limits which cryptographic algorithms can be used</p>
+</li>
+<li>
+<p>includes only ciphers using&nbsp;128-bit or stronger encryption&nbsp;such as:</p>
+<ul>
+<li>
+<p>ECDHE-RSA-AES256-GCM-SHA384</p>
+</li>
+<li>
+<p>ECDHE-RSA-AES128-GCM-SHA256</p>
+</li>
+<li>
+<p>AES256-SHA</p>
+</li>
+<li>
+<p>AES128-SHA</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return:&nbsp; <a title="Go to ftp homepage" href="index.html">ftp</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

@@ -1,0 +1,24 @@
+<h1>redis</h1>
+<h2>dockerfile</h2>
+<p><img src="./images/dockerfile.png" alt="Redis dockerfile" /></p>
+<h3>RUN apk add &ndash;no-cache redis</h3>
+<p style="padding-left: 30px;">&bull; Install redis package containg redis-server</p>
+<p>&nbsp;</p>
+<h3>COPY ./files/entrypoint.sh /usr/local/bin/entrypoint.sh / RUN chmod +x /usr/local/bin/entrypoint.sh</h3>
+<p style="padding-left: 30px;">&bull; Copy entrypoint script to container and make it executable</p>
+<p>&nbsp;</p>
+<h3>RUN mkdir -p /var/lib/redis &amp;&amp; chown redis:redis /var/lib/redis</h3>
+<p style="padding-left: 30px;">&bull; Create redis data dir and set ownership to redis user</p>
+<p>&nbsp;</p>
+<h3>EXPOSE 6379</h3>
+<p style="padding-left: 30px;">&bull; Standard redis server port</p>
+<p style="padding-left: 30px;">&bull; Used to communicate with wordpress</p>
+<p>&nbsp;</p>
+<h3>USER redis</h3>
+<p style="padding-left: 30px;">&bull; Switch to redis user created by redis-server</p>
+<p style="padding-left: 30px;">&bull; Don&rsquo;t run as root for security reasons</p>
+<p>&nbsp;</p>
+<h3>ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]</h3>
+<p style="padding-left: 30px;">&bull; Run entrypoint script as redis user</p>
+<p style="padding-left: 30px;">&nbsp;</p>
+<p>Return: <a title="Redis homepage" href="index.html">redis</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

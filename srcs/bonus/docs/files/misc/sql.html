@@ -1,0 +1,118 @@
+<h1>misc</h1>
+<h2>SQL Commands</h2>
+<h4>SHOW DATABASES</h4>
+<ul>
+<li>List all databases</li>
+</ul>
+<p>&nbsp;</p>
+<h4>USE wordpress</h4>
+<ul>
+<li>Select database</li>
+</ul>
+<p>&nbsp;</p>
+<h4>SHOW TABLES</h4>
+<ul>
+<li>List tables</li>
+</ul>
+<p>&nbsp;</p>
+<h4>SELECT * FROM table</h4>
+<ul>
+<li>Get all columns (* = wildcard)</li>
+</ul>
+<p>&nbsp;</p>
+<h4>SELECT COUNT(*) FROM table</h4>
+<ul>
+<li>Count rows</li>
+</ul>
+<p>&nbsp;</p>
+<h4>DESCRIBE table</h4>
+<ul>
+<li>Show table structure</li>
+</ul>
+<p>&nbsp;</p>
+<h4>CREATE USER 'user'@'host' IDENTIFIED BY 'pass'</h4>
+<ul>
+<li>
+<p>@ separates username from hostname</p>
+</li>
+<li>
+<p>'localhost' = local only</p>
+</li>
+<li>
+<p>'%' = any host (wildcard)</p>
+</li>
+<li>
+<p>IDENTIFIED BY = set password</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h4>GRANT ALL PRIVILEGES ON db.* TO 'user'@'host'</h4>
+<ul>
+<li>
+<p>db.* = all tables in database (* = wildcard)</p>
+</li>
+<li>
+<p>*.* = all databases and tables</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h4>FLUSH PRIVILEGES</h4>
+<ul>
+<li>
+<p>Reload permissions</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h4>SELECT User, Host FROM mysql.user</h4>
+<ul>
+<li>
+<p>mysql.user = system table (database.table)</p>
+</li>
+<li>
+<p>WHERE column = 'value'</p>
+</li>
+<li>
+<p>Filter results</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h4>LIMIT 10</h4>
+<ul>
+<li>
+<p>Return only 10 rows</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h4>LIKE 'pattern%'</h4>
+<ul>
+<li>
+<p>Pattern matching (% = wildcard)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h4>Key Symbols</h4>
+<ul>
+<li>
+<p>@ = user@host separator</p>
+</li>
+<li>
+<p>% = wildcard (any/all)</p>
+</li>
+<li>
+<p>* = all (columns/tables/rows)</p>
+</li>
+<li>
+<p>. = database.table separator</p>
+</li>
+<li>
+<p>= = equals comparison</p>
+</li>
+<li>
+<p>; = statement terminator</p>
+</li>
+<li>
+<p>' ' = string values</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return: <a title="misc homepage" href="index.html">misc</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

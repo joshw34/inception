@@ -1,0 +1,38 @@
+<h1>ftp</h1>
+<h2>dockerfile</h2>
+<p><img src="./images/dockerfile.png" alt="ftp dockerfile" /></p>
+<h3>RUN apk add &ndash;no-cache vsftpd openssl</h3>
+<ul>
+<li>
+<p>Install ftp server and openssl to generate ssl certificates</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>COPY</h3>
+<ul>
+<li>
+<p>Add ftp server config and entrypoint script to container</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>EXPOSE 20 21 50000-50010</h3>
+<ul>
+<li>
+<p>20 = file transfers in active mode</p>
+</li>
+<li>
+<p>21 = commands</p>
+</li>
+<li>
+<p>50000-50010 = ports range for transfers in passive mode</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]</h3>
+<ul>
+<li>
+<p>Run entrypoint script when container starts</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return:&nbsp; <a title="Go to ftp homepage" href="index.html">ftp</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

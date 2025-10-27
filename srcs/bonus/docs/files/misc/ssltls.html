@@ -1,0 +1,83 @@
+<h1>misc</h1>
+<h2>ssl/tls</h2>
+<ul>
+<li>
+<p>TLS = modern version of SSL (SSL is deprecated/insecure)</p>
+</li>
+<li>
+<p>Private key = key.pem (secret, stays on server)</p>
+</li>
+<li>
+<p>Public key = included in cert.pem (public, sent to everyone)</p>
+</li>
+<li>
+<p>Regular HTTP is unencrypted - data sent in plain text (can be intercepted)</p>
+</li>
+<li>
+<p>HTTPS addresses this via public key encryption (asymmetric) + session keys (symmetric)</p>
+</li>
+<li>
+<p>Something encrypted with the public key can only be decrypted with the private key</p>
+</li>
+<li>
+<p>Encryption process:</p>
+<ul>
+<li>
+<p>Site sends cert to user (contains public key)</p>
+</li>
+<li>
+<p>User generates random session key and encrypts it using our public key</p>
+</li>
+<li>
+<p>We decrypt this session key using our private key</p>
+</li>
+<li>
+<p>This session key is now known only by us and the user</p>
+</li>
+<li>
+<p>All further communication uses this session key (fast symmetric encryption)</p>
+</li>
+<li>
+<p>Any intercepted data is useless without the session key</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Why self-signed certificates show warnings:</p>
+<ul>
+<li>
+<p>Encryption still works perfectly</p>
+</li>
+<li>
+<p>Warning is about TRUST (can't verify you own the domain)</p>
+</li>
+<li>
+<p>CA-signed certificates are trusted because a Certificate Authority vouches for you</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Inception project:</p>
+<ul>
+<li>
+<p>NGINX terminates SSL/TLS (decrypts HTTPS traffic)</p>
+</li>
+<li>
+<p>Internal container communication (NGINX &rarr; WordPress &rarr; MariaDB) is unencrypted.</p>
+<ul>
+<li>
+<p>This is ok because it's on a private Docker network</p>
+</li>
+<li>
+<p>No external access to internal traffic</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Only port 443 (HTTPS) is exposed externally</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return: <a title="misc homepage" href="index.html">misc</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

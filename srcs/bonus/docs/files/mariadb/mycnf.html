@@ -1,0 +1,32 @@
+<h1><strong>mariadb</strong></h1>
+<h2><strong>my.cnf</strong></h2>
+<p><strong><img src="./images/mycnf.png" alt="mariadb my.cnf" /></strong></p>
+<p>&nbsp;</p>
+<h3>[mysqld]</h3>
+<ul>
+<li>
+<p>Configure the mariadb server daemon</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>bind-address = 0.0.0.0</h3>
+<ul>
+<li>
+<p>Will accept connections from any ip</p>
+</li>
+<li>
+<p>No ports exposed to external network so only other members of the docker network can connect</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>skip-networking = 0</h3>
+<ul>
+<li>
+<p>Allow tcp/ip connections rather than limit to local unix socket connections</p>
+</li>
+<li>
+<p>Could not connect over docker network otherwise</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Return: <a title="Go to mariadb homepage" href="index.html">mariadb</a>&nbsp; <a title="Go to inception homepage" href="../index.html">home</a></strong></p>

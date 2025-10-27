@@ -1,0 +1,69 @@
+<h1>wordpress</h1>
+<h2>www.conf</h2>
+<p><img src="./images/wwwconf.png" alt="wordpress www.conf" />&nbsp;</p>
+<h3>user =&nbsp;wp-data&nbsp;/ group =&nbsp;wp-data</h3>
+<ul>
+<li>
+<p>Sets user and group of php-fpm processes to&nbsp;wp-data</p>
+</li>
+<li>
+<p>wp-data&nbsp;only has access to files they own. Cannot modify systemfiles</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>listen = 0.0.0.0:9000</h3>
+<ul>
+<li>
+<p>Will listen on all ip addresses on port 9000</p>
+</li>
+<li>
+<p>Only from inside the docker network &ndash; no externally exposed ports</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>listen.owner / listen.group</h3>
+<ul>
+<li>
+<p>Name / group of the user of the unix port for internal connections</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>pm = dynamic</h3>
+<ul>
+<li>
+<p>How php-fpm will control the number of child processes</p>
+</li>
+<li>
+<p>dynamic: the number of child processes are set dynamically based on the following parmaters</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>pm.max_children = 5</h3>
+<ul>
+<li>
+<p>The maximum number of children that can be alive at the same time</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>pm.start_servers = 2</h3>
+<ul>
+<li>
+<p>The number of children created on startup</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>pm.min_spare_servers = 1</h3>
+<ul>
+<li>
+<p>the minimum number of children in 'idle' state (waiting to process). If the number of 'idle' processes is less than this number then some children will be created</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>pm.max_spare_servers = 3</h3>
+<ul>
+<li>
+<p>the maximum number of children in 'idle' state (waiting to process). If the number of 'idle' processes is greater than this number then some children will be killed.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return:&nbsp; <a title="Go to wordpress homepage" href="index.html">wordpress</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

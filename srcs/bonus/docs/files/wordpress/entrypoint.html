@@ -1,0 +1,121 @@
+<h1>wordpress</h1>
+<h2>entrypoint.sh</h2>
+<p><img src="./images/entrypoint.png" alt="wordpress entrypoint script" /></p>
+<h3>set -e</h3>
+<ul>
+<li>
+<p>Exit on error</p>
+</li>
+<li>
+<p>If any command fails, the script will exit and&nbsp;mariadb&nbsp;will not run with incomplete setup</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>MYSQL_PASSWORD / WP_ADMIN_PASSWORD / WP_USER_PASSWORD /&nbsp;REDIS_PASSWORD</h3>
+<ul>
+<li>
+<p>Passwords for database / wordpress user&nbsp;and redis server (bonus)&nbsp;provided via docker secrets</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>Wait for MariaDB port to be ready</h3>
+<ul>
+<li>
+<p>Allow 30 retries (if noconnected by that point there is probably a configuration error)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>nc -z $MYSQL_HOST 3306 2&gt;/dev/null</h3>
+<ul>
+<li>
+<p>Use netcat to check when mariadb port is open</p>
+</li>
+<li>
+<p>sleep 5 allows the server to be fully initialised after port open</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>cd /var/www/html</h3>
+<ul>
+<li>
+<p>Change directory to the wordpress root (host mount)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>if [ ! -f wp-config.php ]</h3>
+<ul>
+<li>
+<p>Check if wp-config.php has been created</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>wp config create</h3>
+<ul>
+<li>
+<p>Create wp-config using variables from .env file created by Makefile or from docker secrets</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>if ! wp core is-installed --allow-root 2&gt;/dev/null</h3>
+<ul>
+<li>
+<p>Check if wordpress core files are installed</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>wp core install</h3>
+<ul>
+<li>
+<p>Install core wordpess files and create admin user</p>
+</li>
+<li>
+<p>Use variables from .env created by Makefile and from docker secrets</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>wp user create</h3>
+<ul>
+<li>
+<p>Create secondary wordpess user</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>wp plugin install &ndash;activate</h3>
+<ul>
+<li>
+<p>Install redis object cache plugin</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>sed -i</h3>
+<ul>
+<li>
+<p>Insert required redis config data into wp-config.php</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>wp redis enable</h3>
+<ul>
+<li>
+<p>Enable the Redis Object Cache Plugin (bonus)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>chown -R wp-data:wp-data /var/www/html</h3>
+<ul>
+<li>
+<p>Ensure wp-data owns wordpress files as they were created by root</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>exec php-fpm84 -F</h3>
+<ul>
+<li>
+<p>Run php-fpm in the foreground</p>
+</li>
+<li>
+<p>Prevents docker container from exiting</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return:&nbsp; <a title="Go to wordpress homepage" href="index.html">wordpress</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

@@ -1,0 +1,54 @@
+<h1>misc</h1>
+<h2>redis</h2>
+<ul>
+<li>
+<p>Redis = REmote DIctionary Server</p>
+</li>
+<li>
+<p>In-memory data store, often used as a cache</p>
+</li>
+<li>
+<p>Keeps all data RAM &rarr; very fast</p>
+</li>
+<li>
+<p>Stores data as key-value pairs</p>
+</li>
+<li>
+<p>Values can be strings / lists / sets / hash etc</p>
+</li>
+<li>
+<p>Periodically save snapshots or append logs to disk to recover after restarts</p>
+</li>
+<li>
+<p>Use cases:</p>
+<ul>
+<li>
+<p>Caching &mdash; store the results of expensive database queries or API calls to speed up response time.</p>
+</li>
+<li>
+<p>Session storage &mdash; websites store user sessions in Redis so they can be shared across multiple web servers.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Wordpress normally stores cached data in the mariadb database or PHP memory, which can be slow</p>
+<ul>
+<li>
+<p>Redis Object Cache plugin replaces this with Redis, so WordPress can:</p>
+<ul>
+<li>
+<p>Store query results, options, and object data in RAM</p>
+</li>
+<li>
+<p>Retrieve them almost instantly</p>
+</li>
+<li>
+<p>Reduce database load</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return: <a title="misc homepage" href="index.html">misc</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

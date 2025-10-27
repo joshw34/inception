@@ -1,0 +1,139 @@
+<h1>ftp</h1>
+<h2>entrypoint.sh</h2>
+<p><img src="./images/entrypoint.png" alt="ftp entrypoint script" /></p>
+<h3>set -e</h3>
+<ul>
+<li>
+<p>Exit on error</p>
+</li>
+<li>
+<p>If any command fails, the script will exit and&nbsp;mariadb&nbsp;will not run with incomplete setup</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>FTP_USER_PASSWORD=$(cat /run/secrets/ftp_user_password)</h3>
+<ul>
+<li>
+<p>Password to be used for the local ftp user</p>
+</li>
+<li>
+<p>Generated in makefile and passed to container by docker secrets</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>if ! id -u "$FTP_USER" &gt;/dev/null 2&gt;&amp;1</h3>
+<ul>
+<li>
+<p>Check if the user provided from .env has been created already</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>adduser -u 1000 -s /sbin/nologin -D -h /mnt/ftpdata "$FTP_USER"</h3>
+<ul>
+<li>
+<p>User created with UID of 1000 to match wp-data user. Shared ownership of files</p>
+</li>
+<li>
+<p>No shell set</p>
+</li>
+<li>
+<p>-D = no password set</p>
+</li>
+<li>
+<p>Home directory set to mounted wordpress-data volume</p>
+</li>
+<li>
+<p>Only runs if user doesn&rsquo;t exist (first run or if env variable changed)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>echo "$FTP_USER:$FTP_USER_PASSWORD" | chpasswd</h3>
+<ul>
+<li>
+<p>Set password to value provided by docker secrets</p>
+</li>
+<li>
+<p>Runs on every launch in case the password file has been changed</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>if [ ! -f /etc/ssl/private/vsftpd.crt ]</h3>
+<ul>
+<li>
+<p>Check if SSL cert is created</p>
+</li>
+<li>
+<p>Will create it if not</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>mkdir -p /etc/ssl/private</h3>
+<ul>
+<li>
+<p>Create ssl directory in nginx config directory</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>openssl req</h3>
+<ul>
+<li>
+<p>Openssl certificate request tool</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>x509</h3>
+<ul>
+<li>
+<p>Create a self-signed certificate</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>nodes</h3>
+<ul>
+<li>
+<p>Don&rsquo;t encrypt private key (no passphrase needed)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>days 365</h3>
+<ul>
+<li>
+<p>Valid for 1 year</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>newkey rsa:2048</h3>
+<ul>
+<li>
+<p>Generate rsa private key with 2048 bits</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>keyout / out</h3>
+<ul>
+<li>
+<p>Where to save private key and public certificate</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>subj</h3>
+<ul>
+<li>
+<p>Certificate subject (identity info)</p>
+</li>
+<li>
+<p>${DOMAIN_NAME} inherited from .env via docker-compose.yaml</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>exec /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf</h3>
+<ul>
+<li>
+<p>Start the vsftpd daemon in the foreground using the configuration file added during build</p>
+</li>
+<li>
+<p>exec = becomes PID1</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return:&nbsp; <a title="Go to ftp homepage" href="index.html">ftp</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

@@ -1,0 +1,138 @@
+<h1>wordpress</h1>
+<h2>dockerfile</h2>
+<p><img src="./images/dockerfile.png" alt="wordpress dockerfile" /></p>
+<h3>RUN addgroup / adduser</h3>
+<ul>
+<li>
+<p>Create user to run php-fpm</p>
+</li>
+<li>
+<p>User with same uid/gid created in ftp container to allow read/write access</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>RUN&nbsp;apk add etc</h3>
+<ul>
+<li>
+<p><strong>Install packages:</strong></p>
+<ul>
+<li>
+<p>php = base php interpreter</p>
+</li>
+<li>
+<p>php-ctype = required for redis cache (bonus)</p>
+</li>
+<li>
+<p>php-curl = Handles remote requests, allowing WordPress to connect with external servers</p>
+</li>
+<li>
+<p>php-dom = Allows PHP to read, parse, and modify XML/HTML documents</p>
+</li>
+<li>
+<p>php-exif = Reads metadata from image files</p>
+</li>
+<li>
+<p>php-fileinfo = Detects file types by examining file content</p>
+</li>
+<li>
+<p>php-fpm =&nbsp;FastCGI process manager. Runs php code</p>
+</li>
+<li>
+<p>php-gd&nbsp;=&nbsp;Graphics Drawing library for image manipulation.&nbsp;Creates, resizes, crops, and modifies images using PHP</p>
+</li>
+<li>
+<p>php-json =&nbsp;Converts between PHP arrays/objects and JSON strings</p>
+</li>
+<li>
+<p>php-mysqli =&nbsp;Allows PHP to connect to and query MySQL/MariaDB databases</p>
+</li>
+<li>
+<p>php-mbstring =&nbsp;Handles text encoding properly, especially for non-English characters</p>
+</li>
+<li>
+<p>php-opcache =&nbsp;Caches compiled PHP code in memory to avoid recompiling on every request</p>
+</li>
+<li>
+<p>php-openssl =&nbsp;Handles secure communications, encryption, and SSL/TLS connections.&nbsp;External https requests etc. wouldn&rsquo;t work without it</p>
+</li>
+<li>
+<p>php-pecl-redis = required for redis cache (bonus)</p>
+</li>
+<li>
+<p>php-phar = allows execution of php archives (.phar). Needed for wp-cli</p>
+</li>
+<li>
+<p>php-xml =&nbsp;sed for reading/writing XML data, such as configuration files, web services, or import/export functionality</p>
+</li>
+<li>
+<p>php-zip =&nbsp;needed to deal with zip files when updating etc</p>
+</li>
+<li>
+<p>wget = needed to download wordpress</p>
+</li>
+</ul>
+</li>
+<li>
+<p>ln -s /usr/bin/php84 /usr/bin/php</p>
+<ul>
+<li>
+<p>allows php to be with command &lsquo;php&rsquo; not &lsquo;php84&rsquo;</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Download, extract and move wordpress files to correct location, remove archive</p>
+<ul>
+<li>
+<p>Set ownership to wp-data</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Download, extract, make executable and move wp-cli to bin</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>COPY ./files/www.conf /etc/php84/php-fpm.d/www.conf</h3>
+<ul>
+<li>
+<p>Add php-fpm config to container</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>COPY ./files/entrypoint.sh /usr/local/bin/entrypoint.sh</h3>
+<ul>
+<li>
+<p>Add entrypoint script to container</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>RUN chmod +x /usr/local/bin/entrypoint.sh</h3>
+<ul>
+<li>
+<p>Make entrypoint script executable</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>WORKDIR /var/www/html</h3>
+<ul>
+<li>
+<p>Set working directory to wordpress root (host mount)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>EXPOSE 9000</h3>
+<ul>
+<li>
+<p>Port to communicate with nginx fastcgi</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]</h3>
+<ul>
+<li>
+<p>Run entrypoint script when container starts</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return:&nbsp; <a title="Go to wordpress homepage" href="index.html">wordpress</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>

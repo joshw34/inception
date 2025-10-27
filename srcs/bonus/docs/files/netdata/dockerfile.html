@@ -1,0 +1,42 @@
+<h1>netdata</h1>
+<h2>dockerfile</h2>
+<p><img src="./images/dockerfile.png" alt="Netdata dockerfile" /></p>
+<h3>RUN</h3>
+<ul>
+<li>
+<p>Use wget to pull in the official netdata set up script and execute it (the alpine package wouldn&rsquo;t work with the docker plugin)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>COPY</h3>
+<ul>
+<li>
+<p>Add the docker plugin config to the container</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>EXPOSE 19999</h3>
+<ul>
+<li>
+<p>Standard netdata port</p>
+</li>
+<li>
+<p>Not exposed externally, use nginx as reverse proxy</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h3>CMD</h3>
+<ul>
+<li>
+<p>Run the netdata binary</p>
+</li>
+<li>
+<p>-D = do not daemonize (stay in foreground)</p>
+</li>
+<li>
+<p>-u root = run as root (needed to access docker socket)</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Return: <a title="Netdata homepage" href="index.html">netdata</a>&nbsp;&nbsp;<a title="Go to inception homepage" href="../index.html">home</a></p>
+<p>&nbsp;</p>
