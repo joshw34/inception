@@ -7,4 +7,6 @@ COPY ./files/* /var/www/html
 
 LABEL description="docs"
 
+EXPOSE 8080
+
 CMD ["busybox-extras", "httpd", "-f", "-p", "8080", "-h", "/var/www/html"]
