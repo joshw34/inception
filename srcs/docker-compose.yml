@@ -114,7 +114,6 @@ services:
     user: root
     networks:
       - inception
-    restart: always
     cap_add:
       - SYS_PTRACE
       - SYS_ADMIN
@@ -138,6 +137,7 @@ services:
       - /var/log:/host/var/log:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /run/dbus:/run/dbus:ro
+    restart: always
 
   docs:
     build:
@@ -145,7 +145,7 @@ services:
     container_name: docs
     networks:
       - inception
-    restart: no
+    restart: always
 
 
 volumes:
