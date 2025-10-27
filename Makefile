@@ -14,6 +14,7 @@ WP_USER_PASS = $(SECRETS_DIR)/wp_user_password.txt
 FTP_USER_PASS = $(SECRETS_DIR)/ftp_user_password.txt
 REDIS_PASS = $(SECRETS_DIR)/redis_password.txt
 NETDATA_PASS = $(SECRETS_DIR)/netdata_password.txt
+DOCS_PASS = $(SECRETS_DIR)/docs_password.txt
 
 all: setup build up
 
@@ -33,6 +34,7 @@ env-file:
 		echo "WP_URL=https://$(DOMAIN_NAME)" >> ./srcs/.env; \
 		echo "FTP_USER=$(USER_LOGIN)" >> ./srcs/.env; \
 		echo "NETDATA_USER=$(USER_LOGIN)" >> ./srcs/.env; \
+		echo "DOCS_USER=$(USER_LOGIN)" >> ./srcs/.env; \
 		echo "Generated .env file";\
 	fi
 
@@ -65,6 +67,10 @@ secrets:
 	@if [ ! -f $(NETDATA_PASS) ]; then \
 		openssl rand -base64 32 > $(NETDATA_PASS); \
 		echo "Generated netdata_password"; \
+	fi
+	@if [ ! -f $(DOCS_PASS) ]; then \
+		openssl rand -base64 32 > $(DOCS_PASS); \
+		echo "Generated docs_password"; \
 	fi
 
 data-dirs:

@@ -3,6 +3,7 @@
 set -e
 
 NETDATA_PASS=$(cat /run/secrets/netdata_password)
+DOCS_PASS=$(cat /run/secrets/docs_password)
 
 if [ ! -f /etc/nginx/ssl/cert.crt ]; then
   mkdir -p /etc/nginx/ssl
@@ -16,5 +17,6 @@ fi
 sed -i "s/\${DOMAIN_NAME}/$DOMAIN_NAME/g" /etc/nginx/nginx.conf
 
 htpasswd -cb /etc/nginx/netdata_password $NETDATA_USER $NETDATA_PASS
+htpasswd -cb /etc/nginx/docs_password $DOCS_USER $DOCS_PASS
 
 exec nginx -g "daemon off;"

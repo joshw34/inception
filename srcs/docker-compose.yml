@@ -51,8 +51,10 @@ services:
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
       - NETDATA_USER=${NETDATA_USER}
+      - DOCS_USER=${DOCS_USER}
     secrets:
       - netdata_password
+      - docs_password
     ports:
       - "443:443"
     volumes:
@@ -203,3 +205,5 @@ secrets:
     file: ../secrets/redis_password.txt
   netdata_password:
     file: ../secrets/netdata_password.txt
+  docs_password:
+    file: ../secrets/docs_password.txt

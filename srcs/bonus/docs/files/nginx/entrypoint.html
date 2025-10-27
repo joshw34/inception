@@ -94,6 +94,11 @@
 </li>
 </ul>
 <p>&nbsp;</p>
+<h3>htpasswd -cb /etc/nginx/docs_password $DOCS_USER $DOCS_PASS</h3>
+<ul>
+<li>Create password for docs (bonus). Username and password created by makefile and passed via env variable / docker secrets respectively</li>
+</ul>
+<p>&nbsp;</p>
 <h3>exec nginx -g "daemon off;"</h3>
 <ul>
 <li>
